@@ -46,6 +46,6 @@ variable "billing_code" {
 }
 
 variable "realip" {
-  type = string 
+  type    = string
   default = "10.10.10.11"
 }
