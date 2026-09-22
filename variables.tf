@@ -11,7 +11,6 @@ variable "vpc_enable_dns_hostnames" {
   type    = bool
   default = true
 }
-
 variable "vpc_subnet_cidr" {
   type    = string
   default = "10.0.0.0/24"
@@ -22,16 +21,16 @@ variable "map_public_ip_on_launch" {
 }
 
 variable "http_port" {
-  type    = number
+  type = number
 }
 
 variable "ec2_instance_type" {
-  type    = string
+  type = string
 }
 
 variable "company_name" {
-  type = string
-  default = "Globamantics"
+  type    = string
+  default = "Digital Lab"
 }
 
 variable "project" {
@@ -45,4 +44,8 @@ variable "environment" {
 variable "billing_code" {
   type = string
 }
-  
+
+variable "realip" {
+  type = string 
+  default = "10.10.10.11"
+}

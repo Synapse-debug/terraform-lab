@@ -10,19 +10,19 @@ data "aws_ssm_parameter" "nome_a_scelta" {
 resource "aws_vpc" "test" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = var.vpc_enable_dns_hostnames
-  tags = merge(local.common_tags, { Name = lower("${local.naming_prefix}-vpc") })
+  tags                 = merge(local.common_tags, { Name = lower("${local.naming_prefix}-vpc") })
 }
 
 resource "aws_internet_gateway" "test" {
   vpc_id = aws_vpc.test.id
-  tags = merge(local.common_tags, { Name = lower("${local.naming_prefix}-igw") })
+  tags   = merge(local.common_tags, { Name = lower("${local.naming_prefix}-igw") })
 }
 
 resource "aws_subnet" "test" {
   vpc_id                  = aws_vpc.test.id
   cidr_block              = var.vpc_subnet_cidr
   map_public_ip_on_launch = var.map_public_ip_on_launch
-  tags = merge(local.common_tags, { Name = lower("${local.naming_prefix}-subnet") })
+  tags                    = merge(local.common_tags, { Name = lower("${local.naming_prefix}-subnet") })
 }
 
 resource "aws_route_table" "test" {
