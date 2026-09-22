@@ -10,16 +10,19 @@ data "aws_ssm_parameter" "nome_a_scelta" {
 resource "aws_vpc" "test" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = var.vpc_enable_dns_hostnames
+  tags = merge(local.common_tags, { Name = lower("${local.naming_prefix}-vpc") })
 }
 
 resource "aws_internet_gateway" "test" {
   vpc_id = aws_vpc.test.id
+  tags = merge(local.common_tags, { Name = lower("${local.naming_prefix}-igw") })
 }
 
 resource "aws_subnet" "test" {
   vpc_id                  = aws_vpc.test.id
   cidr_block              = var.vpc_subnet_cidr
   map_public_ip_on_launch = var.map_public_ip_on_launch
+  tags = merge(local.common_tags, { Name = lower("${local.naming_prefix}-subnet") })
 }
 
 resource "aws_route_table" "test" {
@@ -52,19 +55,17 @@ resource "aws_security_group" "test" {
 }
 
 resource "aws_instance" "ec2" {
-  ami                    = data.aws_ssm_parameter.nome_a_scelta.value
-  instance_type          = var.ec2_instance_type
-  subnet_id              = aws_subnet.test.id
-  vpc_security_group_ids = [aws_security_group.test.id]
-  user_data              = <<-EOF
-#! /bin/bash
-amazon-linux-extras install -y nginx1
-sed -i 's/listen       \[::\]:80;/#listen \[::\]:80;/' /etc/nginx/nginx.conf
-sed -i 's/listen       80;/listen 10.0.0.10:80;/' /etc/nginx/nginx.conf
-nginx
-rm -f /usr/share/nginx/html/index.html
-echo '<h1>Welcome to the website! Have a pizza! 🍕</h1>' > /usr/share/nginx/html/index.html
-EOF
+  ami                         = data.aws_ssm_parameter.nome_a_scelta.value
+  instance_type               = var.ec2_instance_type
+  subnet_id                   = aws_subnet.test.id
+  vpc_security_group_ids      = [aws_security_group.test.id]
+  user_data_replace_on_change = true
+
+  tags = merge(local.common_tags, { Name = lower("${local.naming_prefix}-nginx1") })
+
+  user_data = templatefile("./templates/startup_script.tpl", {
+    environment = var.environment
+  })
 }
 
 

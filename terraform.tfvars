@@ -1,4 +1,4 @@
-http_port         = 80
+http_port         = 8080
 ec2_instance_type = "t2.micro"
 project           = "terraform-lab"
 environment       = "dev"
